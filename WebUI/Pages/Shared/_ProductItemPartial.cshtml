@@ -1,0 +1,54 @@
+﻿@using Models;
+@model Product
+
+@{
+    bool isAvailableOnStock = Model.AvailableOnStock > 0;
+    string buttonCssClass = isAvailableOnStock ? "btn-success" : "btn-secondary";
+    string imageCssClass = isAvailableOnStock ? "" : "image-disabled";
+    string stockLabel = isAvailableOnStock ? "In Stock" : "Out of Stock";
+    string stockLabelCssClass = isAvailableOnStock ? "stock-label-in" : "stock-label-out";
+}
+
+<div class="card">
+    <a asp-page="ProductDetail" asp-route-productId="@Model.Id">
+        <div class="position-relative">
+            @if (Model.Discount > 0)
+            {
+                <div class="discount-box">
+                    @Model.Discount.ToString("P0")
+                </div>
+            }
+            <div class="product-image-container">
+                <img asp-append-version="true" class="card-img-top @imageCssClass @(!isAvailableOnStock ? "black-and-white" : "")" src="@Model.ImageFile" alt="">
+            </div>
+        </div>
+    </a>
+    <div class="card-body">
+        <div class="price-wrapper">
+            <div class="new-price">
+                @Model.DiscountedPrice.ToString("C")
+            </div>
+            <div class="old-price">
+                @if (Model.Discount > 0)
+                {
+                    <del>@Model.Price.ToString("C")</del>
+                }
+            </div>
+        </div>
+        <div class="sold-rating-wrapper">
+            <div class="sold-items">@Model.Sold.ToString("N0") sold</div>
+            <div class="rating">@Model.Rating.ToString("0.0")</div>
+        </div>
+        <div class="stock-label @stockLabelCssClass">@stockLabel</div>
+        <h4 class="card-title product-name"><a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="color-main product-name">@Model.Name</a></h4>
+        <p class="free-shipping">Free Shipping</p>
+        <div class="row">
+            <div class="col">
+                <form asp-page-handler="AddToCart" method="post" name="addToCartForm" id="add_cart_form">
+                    <button type="submit" class="btn btn-block @buttonCssClass" @(!isAvailableOnStock ? "disabled" : "")>Add to Cart</button>
+                    <input type="hidden" asp-for="@Model.Id" name="productId" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -27,6 +27,11 @@
                         </li>
                     </ul>
                 </div>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @await Html.PartialAsync("_LoginPartial")
+                    </ul>
+                </div>
             </div>
         </nav>
     </header>
