@@ -16,7 +16,7 @@ namespace WebUI.Pages
             _logger = logger;
         }
 
-        public IEnumerable<Product> ProductList { get; set; } = new List<Product>();
+        public IEnumerable<ProductWithStock> ProductList { get; set; } = new List<ProductWithStock>();
 
         public async Task<IActionResult> OnGetAsync()
         {

@@ -11,19 +11,56 @@ namespace WebUI.Services
             _client = client;
         }
 
-        public async Task<IEnumerable<Product>> GetProducts()
+        public async Task<IEnumerable<ProductWithStock>> GetProducts()
         {
-            return await _client.From<Product>();
+            var products = await _client.From<Product>();
+            var productsWithStock = await AddStockInformation(products);
+
+            return productsWithStock;
         }
 
-        public Task<Product> GetProduct(Guid productId)
+        private async Task<IEnumerable<ProductWithStock>> AddStockInformation(IReadOnlyList<Product> products)
         {
-            return Task.FromResult(new Product { });
+            var productsWithStock = new List<ProductWithStock>();
+
+            foreach (var product in products)
+            {
+                var productWithStock = await AddStockInformation(product);
+
+                productsWithStock.Add(productWithStock);
+            }
+
+            return productsWithStock;
         }
 
-        public Task<IEnumerable<Product>> GetProductsByCategory(string category)
+        private async Task<ProductWithStock> AddStockInformation(Product product)
         {
-            IEnumerable<Product> products = new List<Product>();
+            var stockItem = await _client.FromFilter<StockItem>(stockItem => stockItem.ProductId == product.Id);
+            var productWithStock = new ProductWithStock
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Category = product.Category,
+                Summary = product.Summary,
+                ImageFile = product.ImageFile,
+                Price = product.Price,
+                Quantity = stockItem?.Quantity ?? 0,
+                Discount = stockItem?.Discount ?? 0,
+                Sold = stockItem?.Sold ?? 0,
+                AvailableOnStock = stockItem?.AvailableOnStock ?? 0
+            };
+
+            return productWithStock;
+        }
+
+        public Task<ProductWithStock> GetProduct(Guid productId)
+        {
+            return Task.FromResult(new ProductWithStock { });
+        }
+
+        public Task<IEnumerable<ProductWithStock>> GetProductsByCategory(string category)
+        {
+            IEnumerable<ProductWithStock> products = new List<ProductWithStock>();
             return Task.FromResult(products);
         }
     }

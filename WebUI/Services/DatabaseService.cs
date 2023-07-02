@@ -1,4 +1,5 @@
 ﻿using Postgrest.Models;
+using System.Linq.Expressions;
 
 namespace WebUI.Services
 {
@@ -23,6 +24,15 @@ namespace WebUI.Services
                 .From<TModel>()
                 .Get();
             return modeledResponse.Models;
+        }
+
+        public async Task<TModel> FromFilter<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : BaseModel, new()
+        {
+            var modeledResponse = await _client
+                .From<TModel>()
+                .Where(predicate)
+                .Get();
+            return modeledResponse.Models.Single();
         }
 
         public async Task<List<TModel>> Delete<TModel>(TModel item) where TModel : BaseModel, new()

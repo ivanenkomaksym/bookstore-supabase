@@ -26,30 +26,5 @@ namespace WebUI.Models
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
-
-        public double DiscountedPrice
-        {
-            get
-            {
-                return Price - Price * Discount;
-            }
-            init { }
-        }
-
-        public double Rating
-        {
-            get
-            {
-                var rand = new Random();
-                return 5.0 - rand.NextDouble();
-            }
-            init { }
-        }
-
-        // StockItem properties
-        public ushort Quantity { get; set; }
-        public double Discount { get; set; }
-        public ushort Sold { get; set; }
-        public ushort AvailableOnStock { get; set; }
     }
 }
