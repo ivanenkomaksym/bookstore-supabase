@@ -24,6 +24,7 @@ builder.Services.AddSingleton<AuthenticationStateProvider, CustomAuthStateProvid
 builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
 builder.Services.AddSingleton<IProductService, ProductService>();
+builder.Services.AddSingleton<IShoppingCartService, ShoppingCartService>();
 
 var app = builder.Build();
 
