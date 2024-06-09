@@ -53,9 +53,12 @@ namespace WebUI.Services
             return productWithStock;
         }
 
-        public Task<ProductWithStock> GetProduct(Guid productId)
+        public async Task<ProductWithStock> GetProduct(int productId)
         {
-            return Task.FromResult(new ProductWithStock { });
+            var product = await _client.FromFilter<Product>(p => p.Id == productId);
+            var productsWithStock = await AddStockInformation(product);
+
+            return productsWithStock;
         }
 
         public Task<IEnumerable<ProductWithStock>> GetProductsByCategory(string category)

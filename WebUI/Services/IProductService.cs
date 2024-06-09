@@ -6,6 +6,6 @@ namespace WebUI.Services
     {
         Task<IEnumerable<ProductWithStock>> GetProducts();
         Task<IEnumerable<ProductWithStock>> GetProductsByCategory(string category);
-        Task<ProductWithStock> GetProduct(Guid productId);
+        Task<ProductWithStock> GetProduct(int productId);
     }
 }

@@ -32,7 +32,7 @@ namespace WebUI.Services
                 .From<TModel>()
                 .Where(predicate)
                 .Get();
-            return modeledResponse.Models.Single();
+            return modeledResponse.Models.Count == 0 ? null : modeledResponse.Models.Single();
         }
 
         public async Task<List<TModel>> Delete<TModel>(TModel item) where TModel : BaseModel, new()
@@ -43,6 +43,20 @@ namespace WebUI.Services
             return modeledResponse.Models;
         }
 
+        public async Task<bool> DeleteFilter<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : BaseModel, new()
+        {
+            var findResult = await _client
+                .From<TModel>()
+                .Where(predicate)
+                .Single();
+
+            if (findResult == null)
+                return false;
+
+            await findResult.Delete<TModel>();
+            return true;
+        }
+
         public async Task<List<TModel>?> Insert<TModel>(TModel item) where TModel : BaseModel, new()
         {
             Postgrest.Responses.ModeledResponse<TModel> modeledResponse;
@@ -50,7 +64,26 @@ namespace WebUI.Services
             {
                 modeledResponse = await _client
                     .From<TModel>()
-                    .Insert(item);
+                    .Upsert(item);
+
+                return modeledResponse.Models;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to insert {nameof(TModel)}");
+            }
+
+            return null;
+        }
+
+        public async Task<List<TModel>?> Update<TModel>(TModel item) where TModel : BaseModel, new()
+        {
+            Postgrest.Responses.ModeledResponse<TModel> modeledResponse;
+            try
+            {
+                modeledResponse = await _client
+                    .From<TModel>()
+                    .Update(item);
 
                 return modeledResponse.Models;
             }
