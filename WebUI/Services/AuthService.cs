@@ -22,7 +22,7 @@ namespace WebUI.Services
             _logger = logger;
         }
 
-        public async Task Login(string email, string password)
+        public async Task<Session?> Login(string email, string password)
         {
             _logger.LogInformation("METHOD: Login");
 
@@ -33,6 +33,43 @@ namespace WebUI.Services
             _logger.LogInformation($"client.Auth.CurrentUser.Email {_client?.Auth?.CurrentUser?.Email}");
 
             await _customAuthStateProvider.GetAuthenticationStateAsync();
+
+            return session;
+        }
+
+        public async Task<User?> TryLoginWithCookies(HttpContext httpContext)
+        {
+            var hasSessionId = httpContext.Request.Cookies.TryGetValue("sessionId", out var refreshToken);
+            if (hasSessionId)
+            {
+                try
+                {
+                    var session = await TryLoginWithRefreshToken(refreshToken);
+
+                    httpContext.Response.Cookies.Append("sessionId", session.RefreshToken);
+
+                    return session.User;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to login with refresh token from cookies.");
+                }
+            }
+
+            return null;
+        }
+
+        private async Task<Session?> TryLoginWithRefreshToken(string accessToken)
+        {
+            _logger.LogInformation("METHOD: TryLogin");
+
+            var session = await _client.Auth.SignIn(Constants.SignInType.RefreshToken, accessToken);
+
+            _logger.LogInformation("------------------- User logged in -------------------");
+            // logger.LogInformation($"instance.Auth.CurrentUser.Id {client?.Auth?.CurrentUser?.Id}");
+            _logger.LogInformation($"client.Auth.CurrentUser.Email {_client?.Auth?.CurrentUser?.Email}");
+
+            return session;
         }
 
         public async Task Logout()
@@ -43,8 +80,7 @@ namespace WebUI.Services
 
         public async Task<User?> GetUser()
         {
-            var session = await _client.Auth.RetrieveSessionAsync();
-            return session?.User;
+            return _client.Auth.CurrentUser;
         }
 
     }

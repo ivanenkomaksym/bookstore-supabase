@@ -47,7 +47,12 @@ namespace WebUI.Pages.Account
 
             try
             {
-                await _authService.Login(Input.Email, Input.Password);
+                var session = await _authService.Login(Input.Email, Input.Password);
+                if (session == null)
+                {
+                    // TODO: error handling
+                }
+                HttpContext.Response.Cookies.Append("sessionId", session.RefreshToken);
 
                 var user = await _authService.GetUser();
 

@@ -20,6 +20,7 @@ namespace WebUI.Pages.Account
             _logger.LogInformation("User {Name} logged out at {Time}.", User.Identity.Name, DateTime.UtcNow);
 
             await _authService.Logout();
+            HttpContext.Response.Cookies.Delete("sessionId");
 
             return RedirectToPage("SignedOut");
         }

@@ -1,8 +1,11 @@
 @using WebUI.Services;
 @inject IAuthService AuthService;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor;
 
 @{
     var user = await AuthService.GetUser();
+    if (user == null)
+        user = await AuthService.TryLoginWithCookies(HttpContextAccessor.HttpContext);
 }
 @if (user != null)
 {
