@@ -6,7 +6,7 @@ namespace WebUI.Services
     {
         public Task<Session?> Login(string email, string password);
 
-        public Task<User?> TryLoginWithCookies(HttpContext httpContext);
+        public Task<Session?> TryLoginWithRefreshToken(string refreshToken);
 
         public Task Logout();
 

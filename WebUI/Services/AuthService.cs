@@ -29,7 +29,6 @@ namespace WebUI.Services
             var session = await _client.Auth.SignIn(email, password);
 
             _logger.LogInformation("------------------- User logged in -------------------");
-            // logger.LogInformation($"instance.Auth.CurrentUser.Id {client?.Auth?.CurrentUser?.Id}");
             _logger.LogInformation($"client.Auth.CurrentUser.Email {_client?.Auth?.CurrentUser?.Email}");
 
             await _customAuthStateProvider.GetAuthenticationStateAsync();
@@ -37,36 +36,13 @@ namespace WebUI.Services
             return session;
         }
 
-        public async Task<User?> TryLoginWithCookies(HttpContext httpContext)
+        public async Task<Session?> TryLoginWithRefreshToken(string refreshToken)
         {
-            var hasSessionId = httpContext.Request.Cookies.TryGetValue("sessionId", out var refreshToken);
-            if (hasSessionId)
-            {
-                try
-                {
-                    var session = await TryLoginWithRefreshToken(refreshToken);
+            _logger.LogInformation("METHOD: TryLoginWithRefreshToken");
 
-                    httpContext.Response.Cookies.Append("sessionId", session.RefreshToken);
-
-                    return session.User;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to login with refresh token from cookies.");
-                }
-            }
-
-            return null;
-        }
-
-        private async Task<Session?> TryLoginWithRefreshToken(string accessToken)
-        {
-            _logger.LogInformation("METHOD: TryLogin");
-
-            var session = await _client.Auth.SignIn(Constants.SignInType.RefreshToken, accessToken);
+            var session = await _client.Auth.SignIn(Constants.SignInType.RefreshToken, refreshToken);
 
             _logger.LogInformation("------------------- User logged in -------------------");
-            // logger.LogInformation($"instance.Auth.CurrentUser.Id {client?.Auth?.CurrentUser?.Id}");
             _logger.LogInformation($"client.Auth.CurrentUser.Email {_client?.Auth?.CurrentUser?.Email}");
 
             return session;

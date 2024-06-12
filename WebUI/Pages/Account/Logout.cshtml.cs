@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WebUI.Authentication;
 using WebUI.Services;
 
 namespace WebUI.Pages.Account
@@ -19,8 +20,7 @@ namespace WebUI.Pages.Account
         {
             _logger.LogInformation("User {Name} logged out at {Time}.", User.Identity.Name, DateTime.UtcNow);
 
-            await _authService.Logout();
-            HttpContext.Response.Cookies.Delete("sessionId");
+            await HttpContext.Logout(_authService);
 
             return RedirectToPage("SignedOut");
         }
