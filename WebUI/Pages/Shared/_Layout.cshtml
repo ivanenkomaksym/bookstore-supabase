@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using WebUI.Authentication
+@using WebUI.Services;
+@inject IAuthService AuthService;
+@inject IShoppingCartService ShoppingCartService
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,6 +31,31 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
                     </ul>
+
+                    <form class="form-inline my-2 my-lg-0">
+                        @{
+                            var nofItemsInCartToDisplay = 0;
+
+                            var user = await HttpContextAccessor.HttpContext.GetUserOrTryLoginWithCookies(AuthService);
+                            @if (user != null)
+                            {
+                                var cart = await ShoppingCartService.GetShoppingCart(user.Id);
+
+                                var nofItemsInCart = cart?.DbItems.Count;
+
+                                if (nofItemsInCart != null)
+                                {
+                                    var nofItemsInCartStr = nofItemsInCart.ToString();
+                                    if (!string.IsNullOrEmpty(nofItemsInCartStr))
+                                        nofItemsInCartToDisplay = int.Parse(nofItemsInCartStr);
+                                }
+                            }
+                        }
+                        <a class="btn btn-success btn-sm ml-3" asp-area="" asp-page="/Cart">
+                            <i class="fa fa-shopping-cart"></i> Cart
+                            <span class="badge badge-light">@nofItemsInCartToDisplay</span>
+                        </a>
+                    </form>
                 </div>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">

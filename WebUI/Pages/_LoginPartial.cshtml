@@ -4,9 +4,7 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor;
 
 @{
-    var user = await AuthService.GetUser();
-    if (user == null)
-        user = await HttpContextAccessor.HttpContext.TryLoginWithCookies(AuthService);
+    var user = await HttpContextAccessor.HttpContext.GetUserOrTryLoginWithCookies(AuthService);
 }
 @if (user != null)
 {

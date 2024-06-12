@@ -5,7 +5,15 @@ namespace WebUI.Authentication
 {
     public static class CookieAuthenticationExtensions
     {
-        public static async Task<User?> TryLoginWithCookies(this HttpContext httpContext, IAuthService authService)
+        public static async Task<User?> GetUserOrTryLoginWithCookies(this HttpContext httpContext, IAuthService authService)
+        {
+            var user = await authService.GetUser();
+            user ??= await httpContext.TryLoginWithCookies(authService);
+
+            return user;
+        }
+
+        private static async Task<User?> TryLoginWithCookies(this HttpContext httpContext, IAuthService authService)
         {
             var hasSessionId = httpContext.TryGetRefreshToken(out var refreshToken);
             if (hasSessionId)

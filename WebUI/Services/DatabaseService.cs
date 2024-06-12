@@ -89,6 +89,7 @@ namespace WebUI.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Failed to update {nameof(TModel)}");
             }
 
             return null;
