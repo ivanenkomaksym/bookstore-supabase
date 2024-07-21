@@ -1,5 +1,5 @@
 ﻿@using Models;
-@model ProductWithStock
+@model StockItem
 
 @{
     bool isAvailableOnStock = Model.AvailableOnStock > 0;
@@ -19,7 +19,7 @@
                 </div>
             }
             <div class="product-image-container">
-                <img asp-append-version="true" class="card-img-top @imageCssClass @(!isAvailableOnStock ? "black-and-white" : "")" src="@Model.ImageFile" alt="">
+                <img asp-append-version="true" class="card-img-top @imageCssClass @(!isAvailableOnStock ? "black-and-white" : "")" src="@Model.Product.ImageFile" alt="">
             </div>
         </div>
     </a>
@@ -31,16 +31,15 @@
             <div class="old-price">
                 @if (Model.Discount > 0)
                 {
-                    <del>@Model.Price.ToString("C")</del>
+                    <del>@Model.Product.Price.ToString("C")</del>
                 }
             </div>
         </div>
         <div class="sold-rating-wrapper">
             <div class="sold-items">@Model.Sold.ToString("N0") sold</div>
-            <div class="rating">@Model.Rating.ToString("0.0")</div>
         </div>
         <div class="stock-label @stockLabelCssClass">@stockLabel</div>
-        <h4 class="card-title product-name"><a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="color-main product-name">@Model.Name</a></h4>
+        <h4 class="card-title product-name"><a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="color-main product-name">@Model.Product.Name</a></h4>
         <p class="free-shipping">Free Shipping</p>
         <div class="row">
             <div class="col">

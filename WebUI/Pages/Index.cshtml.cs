@@ -20,7 +20,7 @@ namespace WebUI.Pages
             _logger = logger;
         }
 
-        public IEnumerable<ProductWithStock> ProductList { get; set; } = new List<ProductWithStock>();
+        public IEnumerable<StockItem> ProductList { get; set; } = new List<StockItem>();
 
         public async Task<IActionResult> OnGetAsync()
         {

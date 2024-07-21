@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using Postgrest.Attributes;
+﻿using Postgrest.Attributes;
 using Postgrest.Models;
 
 namespace WebUI.Models
@@ -13,16 +12,10 @@ namespace WebUI.Models
         [Column("UserId")]
         public string UserId { get; init; }
 
-        [Column("UserEmail")]
-        public string UserEmail { get; init; }
-
         [Column("TotalPrice")]
         public double TotalPrice { get; set; }
 
-        [Column("Items")]
-        public List<int> DbItems { get; set; } = new List<int> {};
-
-        [IgnoreDataMember]
-        public List<ShoppingCartItem> CartItems { get; set; } = new List<ShoppingCartItem>();
+        [Reference(typeof(ShoppingCartItem))]
+        public List<ShoppingCartItem> CartItems { get; set; } = new();
     }
 }

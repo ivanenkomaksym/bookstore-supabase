@@ -1,4 +1,5 @@
-﻿using Postgrest.Attributes;
+﻿using System.Runtime.Serialization;
+using Postgrest.Attributes;
 using Postgrest.Models;
 
 namespace WebUI.Models
@@ -7,22 +8,16 @@ namespace WebUI.Models
     public class StockItem : BaseModel
     {
         [PrimaryKey("_id", false)]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
-        [Column("ProductId")]
-        public int ProductId { get; set; }
-
-        [Column("ProductName")]
-        public string? ProductName { get; set; }
+        [Reference(typeof(Product))]
+        public Product Product { get; set; }
 
         [Column("Supplier")]
         public string? Supplier { get; set; }
 
         [Column("Quantity")]
         public ulong Quantity { get; set; }
-
-        [Column("Price")]
-        public double Price { get; set; }
 
         [Column("Discount")]
         public double Discount { get; set; }
@@ -32,5 +27,15 @@ namespace WebUI.Models
 
         [Column("AvailableOnStock")]
         public ulong AvailableOnStock { get; set; }
+
+        [IgnoreDataMember]
+        public double DiscountedPrice
+        {
+            get
+            {
+                return Product.Price - Product.Price * Discount;
+            }
+            init { }
+        }
     }
 }

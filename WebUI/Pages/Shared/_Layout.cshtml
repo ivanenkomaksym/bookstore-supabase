@@ -41,7 +41,7 @@
                             {
                                 var cart = await ShoppingCartService.GetShoppingCart(user.Id);
 
-                                var nofItemsInCart = cart?.DbItems.Count;
+                                var nofItemsInCart = cart?.CartItems.Count;
 
                                 if (nofItemsInCart != null)
                                 {

@@ -10,24 +10,10 @@ namespace WebUI.Models
         [PrimaryKey("_id", false)]
         public int Id { get; init; }
 
-        [Column("ProductId")]
-        public int ProductId { get; set; }
-
         [Column("Quantity")]
         public ushort Quantity { get; set; }
 
-        // Product properties
-        [IgnoreDataMember]
-        public string? ProductName { get; set; }
-
-        [IgnoreDataMember]
-        public double ProductPrice { get; set; }
-
-        [IgnoreDataMember]
-        public string? ImageFile { get; set; }
-
-        [IgnoreDataMember]
-        public ulong AvailableOnStock { get; set; }
-
+        [Reference(typeof(StockItem))]
+        public StockItem StockItem { get; set; }
     }
 }

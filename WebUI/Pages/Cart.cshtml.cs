@@ -45,7 +45,7 @@ namespace WebUI.Pages
                 Cart.TotalPrice = CalculateTotalPrice();
             }
 
-            var basketUpdated = await _shoppingCartService.UpdateShoppingCart(Cart);
+            await _shoppingCartService.UpdateShoppingCart(Cart);
 
             return Page();
         }
@@ -53,19 +53,14 @@ namespace WebUI.Pages
         private double CalculateTotalPrice()
         {        
             // Calculate the total price based on the items in the shopping cart
-            return Cart.CartItems.Sum(item => item.ProductPrice * item.Quantity);
+            return Cart.CartItems.Sum(item => item.StockItem.Product.Price * item.Quantity);
         }
 
         public async Task<IActionResult> OnPostRemoveToCartAsync(int productId)
         {
             var user = await _authService.GetUser();
 
-            var cart = await _shoppingCartService.GetShoppingCart(user.Id);
-
-            var item = cart.CartItems.Single(x => x.ProductId == productId);
-            cart.CartItems.Remove(item);
-
-            var basketUpdated = await _shoppingCartService.UpdateShoppingCart(cart);
+            await _shoppingCartService.RemoveProductFromShoppingCart(user.Id, productId);
 
             return RedirectToPage();
         }

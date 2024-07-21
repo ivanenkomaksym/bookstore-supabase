@@ -39,25 +39,25 @@
                         {
                             <tr>
                                 <td>
-                                    <a asp-page="ProductDetail" asp-route-productId="@cartItem.ProductId"><img asp-append-version="true" class="order-item-image img-fluid" src="@cartItem.ImageFile" alt="Order Item"></a>
+                                    <a asp-page="ProductDetail" asp-route-productId="@cartItem.StockItem.Product.Id"><img asp-append-version="true" class="order-item-image img-fluid" src="@cartItem.StockItem.Product.ImageFile" alt="Order Item"></a>
                                 </td>
-                                <td>@cartItem.ProductName</td>
-                                <td>@cartItem.AvailableOnStock</td>
-                                <td class="text-right">@(cartItem.ProductPrice.ToString("C")) $</td>
+                                <td>@cartItem.StockItem.Product.Name</td>
+                                <td>@cartItem.StockItem.AvailableOnStock</td>
+                                <td class="text-right">@(cartItem.StockItem.Product.Price.ToString("C")) $</td>
                                 <td>
                                     <div class="quantity-spinner">
                                         <form asp-page-handler="IncreaseQuantity" method="post" class="quantity-form">
                                             <input type="hidden" asp-for="@cartItem.Id" name="itemId" />
-                                            <input type="number" asp-for="@cartItem.Quantity" class="form-control quantity-input" min="1" max="@cartItem.AvailableOnStock" name="quantity" onkeydown="return false;"/>
+                                            <input type="number" asp-for="@cartItem.Quantity" class="form-control quantity-input" min="1" max="@cartItem.StockItem.AvailableOnStock" name="quantity" onkeydown="return false;" />
                                         </form>
                                     </div>
                                 </td>
-                                <td class="text-right">@((cartItem.ProductPrice * cartItem.Quantity).ToString("C")) $</td>
+                                <td class="text-right">@((cartItem.StockItem.Product.Price * cartItem.Quantity).ToString("C")) $</td>
                                 <td class="text-right">
 
                                     <form asp-page-handler="removetocart" method="post">
                                         <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
-                                        <input type="hidden" asp-for="@cartItem.ProductId" name="productId" />
+                                        <input type="hidden" asp-for="@cartItem.StockItem.Product.Id" name="productId" />
                                     </form>
 
                                 </td>

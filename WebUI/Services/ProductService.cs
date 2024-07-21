@@ -11,59 +11,23 @@ namespace WebUI.Services
             _client = client;
         }
 
-        public async Task<IEnumerable<ProductWithStock>> GetProducts()
+        public async Task<IEnumerable<StockItem>> GetProducts()
         {
-            var products = await _client.From<Product>();
-            var productsWithStock = await AddStockInformation(products);
+            var productsWithStock = await _client.From<StockItem>();
 
             return productsWithStock;
         }
 
-        private async Task<IEnumerable<ProductWithStock>> AddStockInformation(IReadOnlyList<Product> products)
+        public async Task<StockItem> GetProduct(int productId)
         {
-            var productsWithStock = new List<ProductWithStock>();
-
-            foreach (var product in products)
-            {
-                var productWithStock = await AddStockInformation(product);
-
-                productsWithStock.Add(productWithStock);
-            }
+            var productsWithStock = await _client.FromFilter<StockItem>(p => p.Product.Id == productId);
 
             return productsWithStock;
         }
 
-        private async Task<ProductWithStock> AddStockInformation(Product product)
+        public Task<IEnumerable<StockItem>> GetProductsByCategory(string category)
         {
-            var stockItem = await _client.FromFilter<StockItem>(stockItem => stockItem.ProductId == product.Id);
-            var productWithStock = new ProductWithStock
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Category = product.Category,
-                Summary = product.Summary,
-                ImageFile = product.ImageFile,
-                Price = product.Price,
-                Quantity = stockItem?.Quantity ?? 0,
-                Discount = stockItem?.Discount ?? 0,
-                Sold = stockItem?.Sold ?? 0,
-                AvailableOnStock = stockItem?.AvailableOnStock ?? 0
-            };
-
-            return productWithStock;
-        }
-
-        public async Task<ProductWithStock> GetProduct(int productId)
-        {
-            var product = await _client.FromFilter<Product>(p => p.Id == productId);
-            var productsWithStock = await AddStockInformation(product);
-
-            return productsWithStock;
-        }
-
-        public Task<IEnumerable<ProductWithStock>> GetProductsByCategory(string category)
-        {
-            IEnumerable<ProductWithStock> products = new List<ProductWithStock>();
+            IEnumerable<StockItem> products = new List<StockItem>();
             return Task.FromResult(products);
         }
     }
