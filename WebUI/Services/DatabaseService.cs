@@ -35,12 +35,12 @@ namespace WebUI.Services
             return modeledResponse.Models.Count == 0 ? null : modeledResponse.Models.Single();
         }
 
-        public async Task<List<TModel>> Delete<TModel>(TModel item) where TModel : BaseModel, new()
+        public async Task Delete<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : BaseModel, new()
         {
-            var modeledResponse = await _client
+            await _client
                 .From<TModel>()
-                .Delete(item);
-            return modeledResponse.Models;
+                .Where(predicate)
+                .Delete();
         }
 
         public async Task<bool> DeleteFilter<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : BaseModel, new()
@@ -58,6 +58,25 @@ namespace WebUI.Services
         }
 
         public async Task<List<TModel>?> Insert<TModel>(TModel item) where TModel : BaseModel, new()
+        {
+            Postgrest.Responses.ModeledResponse<TModel> modeledResponse;
+            try
+            {
+                modeledResponse = await _client
+                    .From<TModel>()
+                    .Insert(item);
+
+                return modeledResponse.Models;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to insert {nameof(TModel)}");
+            }
+
+            return null;
+        }
+
+        public async Task<List<TModel>?> InsertMany<TModel>(ICollection<TModel> item) where TModel : BaseModel, new()
         {
             Postgrest.Responses.ModeledResponse<TModel> modeledResponse;
             try
