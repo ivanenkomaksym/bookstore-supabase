@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Authorization;
+using WebUI.Middlewares;
 using WebUI.Providers;
 using WebUI.Services;
 
@@ -29,6 +30,8 @@ builder.Services.AddSingleton<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
 var app = builder.Build();
+
+app.UseCookieAuthentication();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
